@@ -12,4 +12,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="welcome_message">Welcome to EduWorld!</string>
+    <string name="go_to_login">Login</string>
 </resources>
