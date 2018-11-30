@@ -23,6 +23,8 @@ import android.widget.TextView
 
 import java.util.ArrayList
 import android.Manifest.permission.READ_CONTACTS
+import android.annotation.SuppressLint
+import android.content.Intent
 
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -59,6 +61,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         loaderManager.initLoader(0, null, this)
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun mayRequestContacts(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true
@@ -68,8 +71,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(email, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                .setAction(android.R.string.ok,
-                    { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
+                .setAction(android.R.string.ok
+                ) { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) }
         } else {
             requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS)
         }
@@ -156,6 +159,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Shows the progress UI and hides the login form.
      */
+    @SuppressLint("ObsoleteSdkInt")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -237,6 +241,12 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         email.setAdapter(adapter)
     }
 
+    fun openMainActivity() {
+        val i = Intent(this, MainActivity::class.java)
+        startActivity(i)
+        finish()
+    }
+
     object ProfileQuery {
         val PROJECTION = arrayOf(
             ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -278,7 +288,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             showProgress(false)
 
             if (success!!) {
-                finish()
+                openMainActivity()
             } else {
                 password.error = getString(R.string.error_incorrect_password)
                 password.requestFocus()
