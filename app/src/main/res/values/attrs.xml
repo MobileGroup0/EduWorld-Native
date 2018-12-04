@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BookingFragment">
+        <attr name="state" format="enum">
+            <enum name="pending" value="0" />
+            <enum name="upcoming" value="1" />
+            <enum name="cancelled" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

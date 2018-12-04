@@ -31,16 +31,23 @@ import kotlinx.android.synthetic.main.activity_login.*
 /**
  * A login screen that offers login via email/password.
  */
+//TODO: Reimplement login code
 class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private var mAuthTask: UserLoginTask? = null
+    //private var mAuthTask: UserLoginTask? = null
+
+    fun login(v: View){
+        setContentView(R.layout.activity_loading)
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        // Set up the login form.
+    /*    // Set up the login form.
         populateAutoComplete()
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -50,9 +57,9 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             false
         })
 
-        email_sign_in_button.setOnClickListener { attemptLogin() }
+        email_sign_in_button.setOnClickListener { attemptLogin() } */
     }
-
+/*
     private fun populateAutoComplete() {
         if (!mayRequestContacts()) {
             return
@@ -194,12 +201,12 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             login_form.visibility = if (show) View.GONE else View.VISIBLE
         }
     }
-
+*/
     override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<Cursor> {
         return CursorLoader(
-            this,
+            this/* ,
             // Retrieve data rows for the device user's 'profile' contact.
-            Uri.withAppendedPath(
+           Uri.withAppendedPath(
                 ContactsContract.Profile.CONTENT_URI,
                 ContactsContract.Contacts.Data.CONTENT_DIRECTORY
             ), ProfileQuery.PROJECTION,
@@ -212,25 +219,26 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
             // Show primary email addresses first. Note that there won't be
             // a primary email address if the user hasn't specified one.
-            ContactsContract.Contacts.Data.IS_PRIMARY + " DESC"
+            ContactsContract.Contacts.Data.IS_PRIMARY + " DESC"*/
         )
     }
 
     override fun onLoadFinished(cursorLoader: Loader<Cursor>, cursor: Cursor) {
-        val emails = ArrayList<String>()
+        /*val emails = ArrayList<String>()
         cursor.moveToFirst()
         while (!cursor.isAfterLast) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS))
             cursor.moveToNext()
         }
 
-        addEmailsToAutoComplete(emails)
+        addEmailsToAutoComplete(emails)*/
     }
 
     override fun onLoaderReset(cursorLoader: Loader<Cursor>) {
 
     }
 
+/*
     private fun addEmailsToAutoComplete(emailAddressCollection: List<String>) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         val adapter = ArrayAdapter(
@@ -314,4 +322,5 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
          */
         private val DUMMY_CREDENTIALS = arrayOf("foo@example.com:hello", "bar@example.com:world")
     }
+    */
 }

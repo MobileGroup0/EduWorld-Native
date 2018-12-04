@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".HomeFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/scheduledHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scheduled Meetings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <fragment
+        android:id="@+id/booking0"
+        android:name="group0.eduworld.BookingFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:state="upcoming" />
+
+    <TextView
+        android:id="@+id/receivedHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Received Bookings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <fragment
+        android:id="@+id/booking1"
+        android:name="group0.eduworld.BookingFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:state="pending" />
+
+    <TextView
+        android:id="@+id/cancelledHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancelled Meetings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <fragment
+        android:id="@+id/booking2"
+        android:name="group0.eduworld.BookingFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:state="cancelled" />
+
+</LinearLayout>
