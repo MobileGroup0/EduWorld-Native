@@ -41,6 +41,13 @@ class BookingFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        choiceGroup?.visibility = if (bookingState == 0) View.VISIBLE else View.GONE
+        editButton?.visibility = if (bookingState == 1) View.VISIBLE else View.GONE
+        cancelledLabel?.visibility = if (bookingState == 2) View.VISIBLE else View.GONE
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,7 +55,6 @@ class BookingFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_booking, container, false)
     }
-
     /**
      * Parse attributes during inflation from a view hierarchy into the
      * arguments we handle.
@@ -59,10 +65,6 @@ class BookingFragment : Fragment() {
         val a = context.obtainStyledAttributes(attrs, R.styleable.BookingFragment)
 
         bookingState = a.getInt(R.styleable.BookingFragment_state, 0)
-
-        choiceGroup?.visibility = if (bookingState == 0) View.VISIBLE else View.GONE
-        editButton?.visibility = if (bookingState == 1) View.VISIBLE else View.GONE
-        cancelledLabel?.visibility = if (bookingState == 2) View.VISIBLE else View.GONE
 
         a.recycle()
     }

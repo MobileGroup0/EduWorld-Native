@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_booking.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class MainActivity : AppCompatActivity(),
     HomeFragment.OnFragmentInteractionListener,
@@ -51,10 +54,8 @@ class MainActivity : AppCompatActivity(),
 
         // Set up adapter
         mainViewPager.adapter = viewPagerAdapter
-        mainTabLayout.setupWithViewPager(mainViewPager)
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-
     }
 }
