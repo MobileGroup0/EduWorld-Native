@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "13924670927",
+    "firebase_url": "https://eduworld-1542466980636.firebaseio.com",
+    "project_id": "eduworld-1542466980636",
+    "storage_bucket": "eduworld-1542466980636.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13924670927:android:d00f362681b1de5f",
+        "android_client_info": {
+          "package_name": "group0.eduworld"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13924670927-l0n2nvpguredhqcol85v3213ii0uhi2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBX3BsnzudKLexV2thiGpzAWs7PiXQ-_X4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
