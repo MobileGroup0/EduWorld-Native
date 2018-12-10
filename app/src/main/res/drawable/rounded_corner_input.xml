@@ -5,10 +5,10 @@
             android:shape="rectangle">
 
             <solid
-                android:color="@color/blueButton"/>
+                android:color="@color/blueTextBox"/>
 
             <stroke
-                android:color="@color/blueButton"
+                android:color="@color/blueTextBox"
                 android:width="2dp" />
 
             <corners
