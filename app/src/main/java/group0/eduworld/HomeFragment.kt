@@ -5,9 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.functions.FirebaseFunctions
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -26,16 +30,15 @@ private const val ARG_PARAM2 = "param2"
  */
 class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+
+    private lateinit var functions: FirebaseFunctions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+        // Set up cloud functions
+        functions = FirebaseFunctions.getInstance()
     }
 
     override fun onCreateView(
@@ -44,6 +47,29 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val funcData = hashMapOf(
+            "uid" to FirebaseAuth.getInstance().uid
+        )
+
+        functions.getHttpsCallable("getProfile")
+            .call(funcData)
+            .continueWith { task ->
+                // This continuation runs on either success or failure, but if the task
+                // has failed then result will throw an Exception which will be
+                // propagated down.
+                val result = task.result?.data as HashMap<*,*>
+
+                result
+            }.addOnFailureListener {
+                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+            }.addOnSuccessListener {
+                Toast.makeText(context, "logged in as " + it["name"], Toast.LENGTH_LONG).show()
+            }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
