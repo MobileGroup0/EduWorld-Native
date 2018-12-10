@@ -8,7 +8,6 @@ import android.view.View
 class WelcomeActivity : AppCompatActivity() {
 
      fun gotoLogin(v: View) {
-         setContentView(R.layout.activity_loading)
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }

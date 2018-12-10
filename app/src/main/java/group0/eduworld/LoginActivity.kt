@@ -39,7 +39,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     //private var mAuthTask: UserLoginTask? = null
 
     fun login(v: View){
-        setContentView(R.layout.activity_loading)
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
