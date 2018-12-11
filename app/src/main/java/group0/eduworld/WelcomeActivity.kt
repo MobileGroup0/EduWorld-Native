@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.google.firebase.FirebaseApp
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -20,5 +21,10 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        FirebaseApp.initializeApp(applicationContext)
     }
 }

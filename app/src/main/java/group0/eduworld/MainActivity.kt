@@ -5,16 +5,11 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import com.google.android.gms.maps.MapFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.functions.FirebaseFunctions
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
-    HomeFragment.OnFragmentInteractionListener,
     BookingFragment.OnFragmentInteractionListener {
 
     private val homeFragment = HomeFragment()
@@ -55,46 +50,6 @@ class MainActivity : AppCompatActivity(),
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         navigation.selectedItemId = R.id.navigation_home
         switchFragment(homeFragment)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val funcData = hashMapOf(
-            "uid" to FirebaseAuth.getInstance().uid
-        )
-
-        FirebaseFunctions.getInstance().getHttpsCallable("getProfile")
-            .call(funcData)
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.data as HashMap<*,*>
-
-                result
-            }.addOnFailureListener {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-            }.addOnSuccessListener {
-                Toast.makeText(this, "logged in as " + it["name"], Toast.LENGTH_LONG).show()
-            }
-
-
-        // TODO: Remove this
-        FirebaseFunctions.getInstance().getHttpsCallable("getBookings")
-            .call()
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.data as ArrayList<*>
-
-                result
-            }.addOnFailureListener {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-            }.addOnSuccessListener {
-                Log.i("MainActivity", it.toString())
-            }
     }
 
     override fun onFragmentInteraction(uri: Uri) {
