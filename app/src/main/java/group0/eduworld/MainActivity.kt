@@ -1,6 +1,5 @@
 package group0.eduworld
 
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -9,8 +8,7 @@ import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(),
-    BookingFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity() {
 
     private val homeFragment = HomeFragment()
     private val settingsFragment = SettingsFragment()
@@ -50,10 +48,6 @@ class MainActivity : AppCompatActivity(),
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         navigation.selectedItemId = R.id.navigation_home
         switchFragment(homeFragment)
-    }
-
-    override fun onFragmentInteraction(uri: Uri) {
-
     }
 
     fun logOut(v: View){
