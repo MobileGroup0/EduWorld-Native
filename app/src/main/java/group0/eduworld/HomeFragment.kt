@@ -30,13 +30,8 @@ class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
 
-    private lateinit var functions: FirebaseFunctions
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Set up cloud functions
-        functions = FirebaseFunctions.getInstance()
     }
 
     override fun onCreateView(
@@ -50,24 +45,6 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val funcData = hashMapOf(
-            "uid" to FirebaseAuth.getInstance().uid
-        )
-
-        functions.getHttpsCallable("getProfile")
-            .call(funcData)
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.data as HashMap<*,*>
-
-                result
-            }.addOnFailureListener {
-                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
-            }.addOnSuccessListener {
-                Toast.makeText(context, "logged in as " + it["name"], Toast.LENGTH_LONG).show()
-            }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

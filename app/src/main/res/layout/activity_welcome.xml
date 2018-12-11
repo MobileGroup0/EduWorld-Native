@@ -64,7 +64,7 @@
         android:layout_margin="8dp"
         android:background="@drawable/rounded_corner_button"
         android:padding="4dp"
-        android:text="sign up"
+        android:text="@string/sign_up"
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="18sp" />
