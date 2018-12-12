@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,11 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Objects;
 
-public class HomeFragment extends Fragment implements BookingFragment.BookingFragmentListener {
+public class HomeFragment extends Fragment implements BookingView.BookingViewListener {
 
-    private ArrayList<BookingFragment> bookingCards = new ArrayList<>();
+    private ArrayList<BookingView> bookingCards = new ArrayList<>();
 
     @Nullable
     @Override
@@ -34,92 +32,67 @@ public class HomeFragment extends Fragment implements BookingFragment.BookingFra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState == null){
+            new BookingRetriever(this).execute();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateHeaders();
+    }
+
+    public void removeBookingCard(BookingView bf) {
+
+    }
+
+    public void updateBookingCard(BookingView bf) {
+        View view = getView();
+        ViewGroup parent = (ViewGroup) bf.getParent();
+
+        if (parent != null) {
+            // detach the child from parent or you get an exception if you try
+            // to add it to another one
+            parent.removeView(bf);
+        }
+        switch (bf.getBookingState()){
+                case NEW:
+                    ((ViewGroup) view.findViewById(R.id.booking_container_new)).addView(bf);
+                    break;
+                case ACCEPTED:
+                    ((ViewGroup) view.findViewById(R.id.booking_container_accepted)).addView(bf);
+                    break;
+                case DECLINED:
+                    ((ViewGroup) view.findViewById(R.id.booking_container_declined)).addView(bf);
+                    break;
+        }
+    }
+
+    public void updateHeaders() {
 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        @NonNull View view = Objects.requireNonNull(getView());
-
-        new BookingRetriever(this).execute();
-    }
-
-    public void addBookingCard(BookingFragment bf) {
-        @NonNull FragmentManager fm = Objects.requireNonNull(getFragmentManager());
-        if(bookingCards.contains(bf) || bf.isAdded()){
-            return;
-        }
-        bookingCards.add(bf);
-        bf.addBookingFragmentListener(this);
-        @NonNull FragmentTransaction ft = fm.beginTransaction();
-        switch (bf.getBookingState()){
-            case NEW:
-                ft.add(R.id.booking_container_new, bf);
-                break;
-            case ACCEPTED:
-                ft.add(R.id.booking_container_accepted, bf);
-                break;
-            case DECLINED:
-                ft.add(R.id.booking_container_declined, bf);
-                break;
-        }
-        ft.commit();
-    }
-
-    public void removeBookingCard(BookingFragment bf) {
-        @NonNull FragmentManager fm = Objects.requireNonNull(getFragmentManager());
-        if(bookingCards.contains(bf) || bf.isAdded()){
-            return;
-        }
-        bookingCards.remove(bf);
-        @NonNull FragmentTransaction ft = fm.beginTransaction();
-        ft.remove(bf);
-        ft.commit();
-    }
-
-    public void updateBookingCard(BookingFragment bf) {
-        @NonNull FragmentManager fm = Objects.requireNonNull(getFragmentManager());
-        if(!bookingCards.contains(bf) || !bf.isAdded()){
-            return;
-        }
-
-        @NonNull FragmentTransaction ft = fm.beginTransaction();
-        ft.remove(bf);
-        ft.commitNow();
-        ft = fm.beginTransaction();
-        switch (bf.getBookingState()){
-            case NEW:
-                ft.add(R.id.booking_container_new, bf);
-                break;
-            case ACCEPTED:
-                ft.add(R.id.booking_container_accepted, bf);
-                break;
-            case DECLINED:
-                ft.add(R.id.booking_container_declined, bf);
-                break;
-        }
-
-        ft.commit();
-    }
-
-    @Override
-    public void onBookingStateChanged(BookingFragment bookingFragment) {
-        updateBookingCard(bookingFragment);
+    public void onBookingStateChanged(BookingView bookingView) {
+        updateBookingCard(bookingView);
+        updateHeaders();
     }
 
 
-    private static class BookingRetriever extends AsyncTask<Integer, Integer, ArrayList<BookingFragment>>{
+    private static class BookingRetriever extends AsyncTask<Integer, Integer, ArrayList<BookingView>>{
         private WeakReference<HomeFragment> homeFragmentWeakReference;
 
-        private final ArrayList<BookingFragment> fragmentList = new ArrayList<>();
+        private final ArrayList<BookingView> fragmentList = new ArrayList<>();
 
         BookingRetriever(HomeFragment homeFragment){
             homeFragmentWeakReference = new WeakReference<>(homeFragment);
         }
 
         @Override
-        protected ArrayList<BookingFragment> doInBackground(Integer... integers) {
+        protected ArrayList<BookingView> doInBackground(Integer... integers) {
+            final HomeFragment homeFragment = homeFragmentWeakReference.get();
+
             String uid = FirebaseAuth.getInstance().getUid();
             if (uid == null) return null;
 
@@ -140,18 +113,18 @@ public class HomeFragment extends Fragment implements BookingFragment.BookingFra
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 DocumentSnapshot document = task.getResult();
                                                 String status = document.get("status").toString().toLowerCase();
-                                                BookingFragment bf = new BookingFragment();
+                                                BookingView bf = new BookingView(homeFragment.getContext(), homeFragment);
                                                 switch (status){
                                                     case "accepted":
-                                                        bf.setBookingState(BookingFragment.BookingState.ACCEPTED);
+                                                        bf.setBookingState(BookingView.BookingState.ACCEPTED);
                                                         break;
                                                     case "declined":
-                                                        bf.setBookingState(BookingFragment.BookingState.DECLINED);
+                                                        bf.setBookingState(BookingView.BookingState.DECLINED);
                                                     default:
-                                                        bf.setBookingState(BookingFragment.BookingState.NEW);
+                                                        bf.setBookingState(BookingView.BookingState.NEW);
                                                 }
 
-                                                homeFragmentWeakReference.get().addBookingCard(bf);
+                                                homeFragment.updateBookingCard(bf);
                                                 fragmentList.add(bf);
                                             }
                                         });
