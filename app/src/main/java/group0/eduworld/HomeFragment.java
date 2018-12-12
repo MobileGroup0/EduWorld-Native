@@ -8,9 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements BookingView.BookingViewListener {
 
@@ -32,9 +34,12 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null){
-            new BookingRetriever(this).execute();
-        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        new BookingRetriever(this).execute();
     }
 
     @Override
@@ -73,10 +78,13 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
 
     }
 
+
     @Override
     public void onBookingStateChanged(BookingView bookingView) {
         updateBookingCard(bookingView);
         updateHeaders();
+
+        new BookingSender(this).execute(bookingView);
     }
 
 
@@ -98,44 +106,83 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            db.collection("users")
-                    .document(FirebaseAuth.getInstance().getUid())
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document != null && document.exists()) {
-                                    ArrayList<DocumentReference> bookingDocRefs = (ArrayList<DocumentReference>) document.get("bookings");
-                                    for (DocumentReference dr: bookingDocRefs) {
-                                        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                DocumentSnapshot document = task.getResult();
-                                                String status = document.get("status").toString().toLowerCase();
-                                                BookingView bf = new BookingView(homeFragment.getContext(), homeFragment);
-                                                switch (status){
-                                                    case "accepted":
-                                                        bf.setBookingState(BookingView.BookingState.ACCEPTED);
-                                                        break;
-                                                    case "declined":
-                                                        bf.setBookingState(BookingView.BookingState.DECLINED);
-                                                    default:
-                                                        bf.setBookingState(BookingView.BookingState.NEW);
-                                                }
+            try {
+                Tasks.await(db.collection("users")
+                        .document(FirebaseAuth.getInstance().getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document != null && document.exists()) {
+                                        ArrayList<DocumentReference> bookingDocRefs = (ArrayList<DocumentReference>) document.get("bookings");
+                                        for (DocumentReference dr: bookingDocRefs) {
+                                            dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    BookingView bf = new BookingView(homeFragment.getContext(), homeFragment, document.getReference());
+                                                    bf.setData(document.getData());
 
-                                                homeFragment.updateBookingCard(bf);
-                                                fragmentList.add(bf);
-                                            }
-                                        });
+                                                    homeFragment.updateBookingCard(bf);
+                                                    fragmentList.add(bf);
+                                                }
+                                            });
+                                        }
+                                    } else {
                                     }
                                 } else {
                                 }
-                            } else {
                             }
-                        }
-                    });
+                        }));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return fragmentList;
+        }
+    }
+
+
+    private static class BookingSender extends AsyncTask<BookingView, Integer, Integer>{
+        private WeakReference<HomeFragment> homeFragmentWeakReference;
+
+        BookingSender(HomeFragment homeFragment){
+            homeFragmentWeakReference = new WeakReference<>(homeFragment);
+        }
+
+        @Override
+        protected Integer doInBackground(BookingView... bookings) {
+            final HomeFragment homeFragment = homeFragmentWeakReference.get();
+
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid == null) return null;
+
+            HashMap<String, Object> data = new HashMap<>();
+
+
+            for (BookingView bv : bookings) {
+                switch (bv.getBookingState()){
+                    case NEW:
+                        data.put("status", "new");
+                        break;
+                    case ACCEPTED:
+                        data.put("status", "accepted");
+                        break;
+                    case DECLINED:
+                        data.put("status", "declined");
+                }
+                bv.getSource().update(data);
+            }
+
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
         }
     }
 }

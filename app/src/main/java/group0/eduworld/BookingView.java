@@ -1,10 +1,15 @@
 package group0.eduworld;
 
 import android.content.Context;
+import android.renderscript.ScriptGroup;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BookingView extends FrameLayout {
     private LinearLayout choiceGroup;
@@ -26,37 +31,31 @@ public class BookingView extends FrameLayout {
     private BookingState bookingState;
     private BookingViewListener listener;
 
-    public BookingView(Context context) {
+    private DocumentReference source;
+
+    public BookingView(Context context, DocumentReference source) {
         super(context);
         init(context);
+        this.source = source;
     }
 
-    public BookingView(Context context, BookingViewListener bookingViewListener) {
+    public BookingView(Context context, BookingViewListener bookingViewListener, DocumentReference source) {
         super(context);
         init(context);
         this.listener = bookingViewListener;
+        this.source = source;
     }
 
-    public BookingView(Context context, AttributeSet attrs) {
+    public BookingView(Context context, AttributeSet attrs, DocumentReference source) {
         super(context, attrs);
         init(context);
+        this.source = source;
     }
 
-    public BookingView(Context context, AttributeSet attrs, BookingViewListener bookingViewListener) {
-        super(context, attrs);
-        init(context);
-        this.listener = bookingViewListener;
-    }
-
-    public BookingView(Context context, AttributeSet attrs, int defStyle) {
+    public BookingView(Context context, AttributeSet attrs, int defStyle, DocumentReference source) {
         super(context, attrs, defStyle);
         init(context);
-    }
-
-    public BookingView(Context context, AttributeSet attrs, int defStyle, BookingViewListener bookingViewListener) {
-        super(context, attrs, defStyle);
-        init(context);
-        this.listener = bookingViewListener;
+        this.source = source;
     }
 
     public void addBookingViewListener(BookingViewListener bookingViewListener){
@@ -114,7 +113,18 @@ public class BookingView extends FrameLayout {
         if(listener != null) listener.onBookingStateChanged(this);
     }
 
+    public void setData(Map<String, Object> data){
+        ((TextView) findViewById(R.id.subjectTextView)).setText((String) data.get("subject"));
+        ((TextView) findViewById(R.id.nameTextView)).setText((String) data.get("name"));
+        ((TextView) findViewById(R.id.locationTextView)).setText(data.get("location").toString());
+        ((TextView) findViewById(R.id.dateTextView)).setText(data.get("time").toString());
+    }
+
     public BookingState getBookingState() {
         return this.bookingState;
+    }
+
+    public DocumentReference getSource(){
+        return source;
     }
 }

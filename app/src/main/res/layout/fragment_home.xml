@@ -17,15 +17,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/header_accepted"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Scheduled Meetings"
-                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="Scheduled Meetings"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorPrimaryDark" />
 
@@ -41,9 +49,9 @@
                 android:id="@+id/header_new"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Received Bookings"
-                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="Received Bookings"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorPrimaryDark" />
 
@@ -57,9 +65,9 @@
                 android:id="@+id/header_declined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cancelled Meetings"
-                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="Cancelled Meetings"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorPrimaryDark" />
 
