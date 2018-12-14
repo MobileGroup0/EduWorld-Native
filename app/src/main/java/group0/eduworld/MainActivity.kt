@@ -1,6 +1,8 @@
 package group0.eduworld
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Telephony
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -58,7 +60,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openProfile(v: View){
-        // TODO: Impelement
+        val uid = FirebaseAuth.getInstance().uid
+        val intent = Intent(this, ProfileActivity::class.java)
+        intent.putExtra("uid", uid)
+        startActivity(intent)
     }
 
     fun switchFragment(fragment: Fragment){

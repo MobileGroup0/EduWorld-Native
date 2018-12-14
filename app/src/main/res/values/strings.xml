@@ -42,5 +42,6 @@
     <string name="create_new_account">Create New Account</string>
     <string name="already_a_member">Already a member?</string>
     <string name="contentdescription_eduworld_logo">EduWorld Logo</string>
+    <string name="profile">Profile</string>
 
 </resources>

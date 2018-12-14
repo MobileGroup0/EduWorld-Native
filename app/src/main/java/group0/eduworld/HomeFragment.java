@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class HomeFragment extends Fragment implements BookingView.BookingViewListener {
 
     private ArrayList<BookingView> bookingCards = new ArrayList<>();
+    private boolean shouldRefresh = true;
 
     @Nullable
     @Override
@@ -39,7 +40,10 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
     @Override
     public void onStart() {
         super.onStart();
-        new BookingRetriever(this).execute();
+        if(shouldRefresh){
+            new BookingRetriever(this).execute();
+            shouldRefresh = false;
+        }
     }
 
     @Override
@@ -117,7 +121,7 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     if (document != null && document.exists()) {
-                                        ArrayList<DocumentReference> bookingDocRefs = (ArrayList<DocumentReference>) document.get("bookings");
+                                        final ArrayList<DocumentReference> bookingDocRefs = (ArrayList<DocumentReference>) document.get("bookings");
                                         for (DocumentReference dr: bookingDocRefs) {
                                             dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -128,6 +132,7 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
 
                                                     if(homeFragment.isResumed()) {
                                                         homeFragment.updateBookingCard(bf);
+                                                        homeFragment.bookingCards.add(bf);
                                                         fragmentList.add(bf);
                                                     }
                                                 }

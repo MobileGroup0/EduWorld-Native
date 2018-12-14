@@ -54,6 +54,8 @@ public class RegistrationActivity extends AppCompatActivity implements OnComplet
             // register, update UI with the signed-in user's information
             Toast.makeText(getBaseContext(), "Registration successful.",
                     Toast.LENGTH_SHORT).show();
+
+
             supportFinishAfterTransition();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
