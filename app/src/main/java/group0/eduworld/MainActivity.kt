@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val mapFragment = MapFragment()
     private val homeFragment = HomeFragment()
     private val settingsFragment = SettingsFragment()
 
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.navigation_map -> {
                 message.setText(R.string.title_map)
+                switchFragment(mapFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_chat -> {

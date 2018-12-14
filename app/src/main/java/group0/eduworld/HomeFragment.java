@@ -48,7 +48,9 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
         updateHeaders();
     }
 
-    public void removeBookingCard(BookingView bf) {
+    @Override
+    public void onPause() {
+        super.onPause();
 
     }
 
@@ -124,8 +126,10 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
                                                     BookingView bf = new BookingView(homeFragment.getContext(), homeFragment, document.getReference());
                                                     bf.setData(document.getData());
 
-                                                    homeFragment.updateBookingCard(bf);
-                                                    fragmentList.add(bf);
+                                                    if(homeFragment.isResumed()) {
+                                                        homeFragment.updateBookingCard(bf);
+                                                        fragmentList.add(bf);
+                                                    }
                                                 }
                                             });
                                         }

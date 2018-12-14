@@ -73,6 +73,13 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+
+    fun gotoSignUp(v: View) {
+        supportFinishAfterTransition()
+        val intent = Intent(this, RegistrationActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -83,7 +90,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser!=null){

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".RegistrationActivity"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,7 @@
     android:padding="30sp">
 
     <TextView
-        android:id="@+id/welcome_message"
+        android:id="@+id/registration_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10sp"
@@ -21,7 +22,7 @@
         android:lineSpacingExtra="8sp"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
-        android:text="@string/login_to_your_account"
+        android:text="@string/create_new_account"
         android:textColor="@android:color/white"
         android:textSize="36sp"
         android:textStyle="bold"
@@ -51,17 +52,6 @@
         android:inputType="textPassword"
         android:padding="8dp" />
 
-    <TextView
-        android:id="@+id/forgot_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="@string/forgot_your_password"
-        android:textAlignment="textEnd"
-        android:textColor="@color/colorAccent" />
-
     <Button
         android:id="@+id/login_button"
         android:layout_width="match_parent"
@@ -69,8 +59,8 @@
         android:layout_margin="10sp"
         android:background="@drawable/rounded_corner_button"
         android:fadingEdge="none"
-        android:onClick="login"
-        android:text="@string/login"
+        android:onClick="register"
+        android:text="@string/sign_up"
         android:textAllCaps="true"
         android:textColor="@color/colorAccent" />
 
@@ -81,18 +71,18 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/notMember_label"
+            android:id="@+id/alreadyMember_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="@string/not_a_member"
+            android:text="@string/already_a_member"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button" />
 
         <TextView
-            android:id="@+id/signUp_link"
+            android:id="@+id/logIn_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18sp"
@@ -100,8 +90,8 @@
             android:baselineAligned="false"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="gotoSignUp"
-            android:text="@string/sign_up"
+            android:onClick="gotoLogin"
+            android:text="@string/login"
             android:textColor="@color/colorAccent"
             android:textSize="18sp" />
 

@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/contentdescription_eduworld_logo"
         android:scaleType="center"
         android:src="@drawable/student" />
 
@@ -57,12 +57,13 @@
         android:textColor="@android:color/white" />
 
     <Button
-        android:id="@+id/Welcomebutton1"
+        android:id="@+id/signup_button"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
         android:background="@drawable/rounded_corner_button"
+        android:onClick="gotoSignUp"
         android:padding="4dp"
         android:text="@string/sign_up"
         android:textAlignment="center"
@@ -70,29 +71,14 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/Welcomebutton2"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_corner_button"
-        android:padding="4dp"
-        android:text="connect with facebook"
-        android:textColor="@color/colorAccent"
-        android:textSize="18sp" />
-
-    <Button
-        android:id="@+id/Welcomebutton3"
+        android:id="@+id/login_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:onClick="gotoLogin"
         android:padding="4dp"
-        android:text="login "
+        android:text="@string/login"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         android:textStyle="bold" />
