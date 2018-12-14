@@ -57,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    fun openProfile(v: View){
+        // TODO: Impelement
+    }
+
     fun switchFragment(fragment: Fragment){
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.mainFrame, fragment)
