@@ -9,11 +9,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity implements OnCompleteListener<DocumentSnapshot> {
     private final static String TAG = "ProfileActivity";
@@ -36,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity implements OnCompleteList
     }
 
     private void loadProfile() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         try {
             FirebaseFirestore.getInstance().document("users/" + mUID).get().addOnCompleteListener(this);
         } catch (IllegalArgumentException e){
@@ -48,28 +52,46 @@ public class ProfileActivity extends AppCompatActivity implements OnCompleteList
     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
         if(task.isSuccessful()){
             DocumentSnapshot result = task.getResult();
-
+            DocumentReference documentReference = Objects.requireNonNull(result).getReference();
+            if(!result.exists()){
+                documentReference.set(new HashMap<String, Object>());
+            }
             String tmpString;
             ArrayList tmpStrArray;
-            HashMap tmpMap;
+            HashMap tmpMap = null;
 
             StringBuilder stringBuilder;
 
             // Get name
             stringBuilder = new StringBuilder();
-            tmpString = result.getString("firstname");
-            if(tmpString != null) stringBuilder.append(tmpString); stringBuilder.append(" ");
 
-            tmpString = result.getString("lastname");
-            if(tmpString != null) stringBuilder.append(tmpString);
+            if(result.contains("firstname")) {
+                tmpString = result.getString("firstname");
+                if (tmpString != null) stringBuilder.append(tmpString);
+                stringBuilder.append(" ");
+            } else {
+                documentReference.update("firstname", "");
+            }
+
+            if(result.contains("lastname")) {
+                tmpString = result.getString("lastname");
+                if(tmpString != null) stringBuilder.append(tmpString);
+            } else {
+                documentReference.update("lastname", "");
+            }
 
             user_name = stringBuilder.toString();
             ((TextView) findViewById(R.id.title_textview)).setText(user_name);
 
             // Get about
-            user_about = result.getString("about");
-            ((TextView) findViewById(R.id.aboutView)).setText(user_about);
-            Log.i(TAG, user_about);
+            stringBuilder = new StringBuilder("About: ");
+            if(result.contains("about")) {
+              user_about = result.getString("about");
+              stringBuilder.append(user_about);
+            } else {
+                documentReference.update("about", "");
+            }
+            ((TextView) findViewById(R.id.aboutView)).setText(stringBuilder.toString());
 
             // Get subjects
             tmpStrArray = (ArrayList) result.get("subjects");
@@ -84,7 +106,11 @@ public class ProfileActivity extends AppCompatActivity implements OnCompleteList
             ((TextView) findViewById(R.id.subjectView)).setText(stringBuilder.toString());
 
             // Get certifications
-            tmpStrArray = (ArrayList) result.get("certification");
+            if(result.contains("certification")) {
+                tmpStrArray = (ArrayList) result.get("certification");
+            } else {
+                documentReference.update("certification", new ArrayList<String>());
+            }
             stringBuilder = new StringBuilder("Certifications: \n");
             if(tmpStrArray != null){
                 for (Object o : tmpStrArray){
@@ -97,8 +123,13 @@ public class ProfileActivity extends AppCompatActivity implements OnCompleteList
 
             // Get languages
             stringBuilder = new StringBuilder("Languages: ");
-            tmpMap = (HashMap) result.get("language");
-            if(tmpStrArray != null){
+
+            if(result.contains("language")) {
+                tmpMap = (HashMap) result.get("language");
+            } else {
+                documentReference.update("language", new HashMap<String, String>());
+            }
+            if(tmpMap != null){
                 for (Object key : tmpMap.keySet()){
                     user_languages.put((String) key, (Long) tmpMap.get(key));
                     stringBuilder.append((String) key);
@@ -110,7 +141,13 @@ public class ProfileActivity extends AppCompatActivity implements OnCompleteList
             ((TextView) findViewById(R.id.languageView)).setText(stringBuilder.toString());
 
             // Get ?teacher?
-            user_teacher = result.getBoolean("teacher");
+            if(result.contains("teacher")) {
+                user_teacher = result.getBoolean("teacher");
+            } else {
+                documentReference.update("teacher", false);
+                user_teacher = false;
+            }
+
             if(user_teacher) {
                 ((TextView) findViewById(R.id.user_type_view)).setText("Teacher");
 

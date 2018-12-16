@@ -2,7 +2,6 @@ package group0.eduworld
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Telephony
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -12,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val chatFragment = ChatFragment()
     private val mapFragment = MapFragment()
     private val homeFragment = HomeFragment()
     private val settingsFragment = SettingsFragment()
@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.navigation_chat -> {
                 message.setText(R.string.title_chat)
+                switchFragment(chatFragment);
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_home -> {

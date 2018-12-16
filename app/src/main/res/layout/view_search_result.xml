@@ -15,7 +15,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/avatar"
             android:layout_width="@dimen/booking_card_height"
             android:layout_height="@dimen/booking_card_height"
             android:src="@drawable/student"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@+id/imageView">
+            app:layout_constraintStart_toEndOf="@+id/avatar">
 
             <TextView
                 android:id="@+id/nameTextView"

@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.activity_login.*
 /**
  * A login screen that offers login via email/password.
  */
-//TODO: Reimplement login code
 class LoginActivity : AppCompatActivity() {
     private val TAG = "LoginActivity"
     /**

@@ -118,6 +118,17 @@ public class BookingView extends FrameLayout {
         ((TextView) findViewById(R.id.nameTextView)).setText((String) data.get("name"));
         ((TextView) findViewById(R.id.locationTextView)).setText(data.get("location").toString());
         ((TextView) findViewById(R.id.dateTextView)).setText(data.get("time").toString());
+
+        switch ((String) data.get("status")){
+            case "accepted":
+                setBookingState(BookingState.ACCEPTED);
+                break;
+            case "declined":
+                setBookingState(BookingState.DECLINED);
+                break;
+            default:
+                setBookingState(BookingState.NEW);
+        }
     }
 
     public BookingState getBookingState() {

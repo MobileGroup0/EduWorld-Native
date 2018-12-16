@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class HomeFragment extends Fragment implements BookingView.BookingViewListener {
 
     private ArrayList<BookingView> bookingCards = new ArrayList<>();
-    private boolean shouldRefresh = true;
+    public boolean shouldRefresh = true;
 
     @Nullable
     @Override
@@ -56,6 +56,12 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
     public void onPause() {
         super.onPause();
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        shouldRefresh = true;
     }
 
     public void updateBookingCard(BookingView bf) {
@@ -121,6 +127,7 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     if (document != null && document.exists()) {
+                                        if(!document.contains("bookings")) return;
                                         final ArrayList<DocumentReference> bookingDocRefs = (ArrayList<DocumentReference>) document.get("bookings");
                                         for (DocumentReference dr: bookingDocRefs) {
                                             dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
