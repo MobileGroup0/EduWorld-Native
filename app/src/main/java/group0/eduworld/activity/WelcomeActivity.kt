@@ -1,10 +1,11 @@
-package group0.eduworld
+package group0.eduworld.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
+import group0.eduworld.R
 
 class WelcomeActivity : AppCompatActivity() {
 

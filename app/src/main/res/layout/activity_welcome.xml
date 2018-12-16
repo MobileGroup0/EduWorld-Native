@@ -7,7 +7,7 @@
     android:background="@drawable/background"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".WelcomeActivity">
+    tools:context=".activity.WelcomeActivity">
 
     <TextView
         android:id="@+id/WelcomeTextView-1"

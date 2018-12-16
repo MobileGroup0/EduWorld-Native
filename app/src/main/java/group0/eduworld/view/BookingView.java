@@ -1,14 +1,13 @@
-package group0.eduworld;
+package group0.eduworld.view;
 
 import android.content.Context;
-import android.renderscript.ScriptGroup;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import com.google.firebase.firestore.DocumentReference;
+import group0.eduworld.R;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class BookingView extends FrameLayout {

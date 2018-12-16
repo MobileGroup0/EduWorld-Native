@@ -1,4 +1,4 @@
-package group0.eduworld
+package group0.eduworld.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,11 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
+import group0.eduworld.*
+import group0.eduworld.fragment.ChatFragment
+import group0.eduworld.fragment.HomeFragment
+import group0.eduworld.fragment.MapFragment
+import group0.eduworld.fragment.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

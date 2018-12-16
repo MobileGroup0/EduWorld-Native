@@ -1,4 +1,4 @@
-package group0.eduworld;
+package group0.eduworld.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import com.google.firebase.firestore.EventListener;
+import group0.eduworld.R;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -33,29 +34,24 @@ public class ChatSessionCardView extends FrameLayout {
 
     private DocumentReference source;
 
-    public ChatSessionCardView(Context context, DocumentReference source) {
+    public ChatSessionCardView(Context context) {
         super(context);
-        init(context);
-        this.source = source;
+    }
+
+
+    public ChatSessionCardView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ChatSessionCardView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     public ChatSessionCardView(Context context, ChatViewListener bookingViewListener, DocumentReference source) {
         super(context);
+        this.source = source;
         init(context);
         this.listener = bookingViewListener;
-        this.source = source;
-    }
-
-    public ChatSessionCardView(Context context, AttributeSet attrs, DocumentReference source) {
-        super(context, attrs);
-        init(context);
-        this.source = source;
-    }
-
-    public ChatSessionCardView(Context context, AttributeSet attrs, int defStyle, DocumentReference source) {
-        super(context, attrs, defStyle);
-        init(context);
-        this.source = source;
     }
 
     public void addBookingViewListener(ChatViewListener chatViewListener){
@@ -65,12 +61,12 @@ public class ChatSessionCardView extends FrameLayout {
     private void init(Context context) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_chat_session_card, this);
+        inflater.inflate(group0.eduworld.R.layout.view_chat_session_card, this);
 
-        notifier = findViewById(R.id.msgNotifier);
-        nameTextView = findViewById(R.id.nameTextView);
-        dateTextView = findViewById(R.id.dateTextView);
-        previewTextView = findViewById(R.id.previewTextView);
+        notifier = findViewById(group0.eduworld.R.id.msgNotifier);
+        nameTextView = findViewById(group0.eduworld.R.id.nameTextView);
+        dateTextView = findViewById(group0.eduworld.R.id.dateTextView);
+        previewTextView = findViewById(group0.eduworld.R.id.previewTextView);
     }
 
     public void updateData(){
@@ -79,7 +75,7 @@ public class ChatSessionCardView extends FrameLayout {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 // Get name
                 ArrayList participants = (ArrayList) documentSnapshot.get("participants");
-                for(Object user: participants){
+                for(Object user: Objects.requireNonNull(participants)){
                     if(user instanceof DocumentReference){
                         String uid = ((DocumentReference) user).getId();
                         if(!uid.equals(FirebaseAuth.getInstance().getUid())){
@@ -87,7 +83,7 @@ public class ChatSessionCardView extends FrameLayout {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     DocumentSnapshot result = task.getResult();
-                                    if(!result.exists()) return;
+                                    if(!Objects.requireNonNull(result).exists()) return;
                                     StringBuilder stringBuilder;
 
                                     // Get name
@@ -121,7 +117,6 @@ public class ChatSessionCardView extends FrameLayout {
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if(e != null){
                             Log.d(TAG, e.getMessage());
-                            return;
                         }else if(queryDocumentSnapshots != null){
                             DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                             // Set text
@@ -135,7 +130,7 @@ public class ChatSessionCardView extends FrameLayout {
                                 Date date = ((Date)doc.get("time"));
                                 Date today = new Date();
 
-                                long passedDays = TimeUnit.MILLISECONDS.toDays(today.getTime() - date.getTime());
+                                long passedDays = TimeUnit.MILLISECONDS.toDays(today.getTime() - Objects.requireNonNull(date).getTime());
                                 if(passedDays < 1) {
                                     dateTextView.setText(DateFormat.getTimeFormat(getContext()).format(date));
                                 }else if (passedDays < 2){

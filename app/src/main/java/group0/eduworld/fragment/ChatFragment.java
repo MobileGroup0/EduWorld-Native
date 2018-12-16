@@ -1,4 +1,4 @@
-package group0.eduworld;
+package group0.eduworld.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +14,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import group0.eduworld.R;
+import group0.eduworld.view.ChatSessionCardView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

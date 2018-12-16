@@ -1,4 +1,4 @@
-package group0.eduworld;
+package group0.eduworld.fragment;
 
 
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import group0.eduworld.R;
 
 
 /**

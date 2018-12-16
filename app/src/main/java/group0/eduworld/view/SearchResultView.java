@@ -1,4 +1,4 @@
-package group0.eduworld;
+package group0.eduworld.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
