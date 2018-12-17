@@ -1,9 +1,11 @@
 package group0.eduworld.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import group0.eduworld.R;
+import group0.eduworld.activity.ChatActivity;
 import group0.eduworld.view.ChatSessionCardView;
 
 import java.lang.ref.WeakReference;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class ChatFragment extends Fragment implements ChatSessionCardView.ChatViewListener {
+    private final static String TAG = "ChatFragment";
     public boolean shouldRefresh = true;
     private ArrayList<ChatSessionCardView> chatCards = new ArrayList<>();
 
@@ -77,7 +81,7 @@ public class ChatFragment extends Fragment implements ChatSessionCardView.ChatVi
             if (uid == null) return null;
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+            chatFragment.chatCards.clear();
             try {
                 Tasks.await(db.collection("users")
                         .document(FirebaseAuth.getInstance().getUid())
@@ -90,6 +94,8 @@ public class ChatFragment extends Fragment implements ChatSessionCardView.ChatVi
                                         if(!document.contains("chats")) return;
                                         final ArrayList<DocumentReference> chatDocRefs = (ArrayList<DocumentReference>) document.get("chats");
                                         for (DocumentReference dr: chatDocRefs) {
+                                            if(!chatFragment.isResumed()) return;
+
                                             ChatSessionCardView cf = new ChatSessionCardView(chatFragment.getContext(), chatFragment, dr);
                                             cf.updateData();
 
@@ -112,5 +118,11 @@ public class ChatFragment extends Fragment implements ChatSessionCardView.ChatVi
             }
             return fragmentList;
         }
+    }
+
+    public void openChat(String id) {
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra("chat_id", id);
+        startActivity(intent);
     }
 }

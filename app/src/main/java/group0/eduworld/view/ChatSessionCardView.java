@@ -2,24 +2,26 @@ package group0.eduworld.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.*;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
-import com.google.firebase.firestore.EventListener;
 import group0.eduworld.R;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
-public class ChatSessionCardView extends FrameLayout {
+public class ChatSessionCardView extends FrameLayout implements View.OnClickListener {
     private final static String TAG = "ChatSessionCardView";
     private ImageView notifier;
     private TextView nameTextView;
@@ -27,6 +29,7 @@ public class ChatSessionCardView extends FrameLayout {
     private TextView previewTextView;
 
     public interface ChatViewListener{
+        void openChat(String id);
     }
 
     private boolean newMessage = false;
@@ -36,15 +39,17 @@ public class ChatSessionCardView extends FrameLayout {
 
     public ChatSessionCardView(Context context) {
         super(context);
+        init(context);
     }
-
 
     public ChatSessionCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public ChatSessionCardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init(context);
     }
 
     public ChatSessionCardView(Context context, ChatViewListener bookingViewListener, DocumentReference source) {
@@ -63,10 +68,16 @@ public class ChatSessionCardView extends FrameLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(group0.eduworld.R.layout.view_chat_session_card, this);
 
+        findViewById(R.id.card).setOnClickListener(this);
+
         notifier = findViewById(group0.eduworld.R.id.msgNotifier);
         nameTextView = findViewById(group0.eduworld.R.id.nameTextView);
         dateTextView = findViewById(group0.eduworld.R.id.dateTextView);
         previewTextView = findViewById(group0.eduworld.R.id.previewTextView);
+    }
+
+    public void onClick(View view){
+        if(listener != null) listener.openChat(source.getId());
     }
 
     public void updateData(){
@@ -126,22 +137,9 @@ public class ChatSessionCardView extends FrameLayout {
 
                             // Set time
                             if(doc.contains("time")){
-                                Locale locale = Locale.getDefault();
                                 Date date = ((Date)doc.get("time"));
-                                Date today = new Date();
-
-                                long passedDays = TimeUnit.MILLISECONDS.toDays(today.getTime() - Objects.requireNonNull(date).getTime());
-                                if(passedDays < 1) {
-                                    dateTextView.setText(DateFormat.getTimeFormat(getContext()).format(date));
-                                }else if (passedDays < 2){
-                                    dateTextView.setText(R.string.time_yesterday);
-                                } else if (passedDays < 7){
-                                    dateTextView.setText(DateFormat.format(DateFormat.getBestDateTimePattern(locale, "EEE"), date));
-                                } else if (passedDays < 365){
-                                    dateTextView.setText(DateFormat.format(DateFormat.getBestDateTimePattern(locale, "MM dd"), date));
-                                } else {
-                                    dateTextView.setText(DateFormat.format(DateFormat.getBestDateTimePattern(locale, "MM dd, yyyy"), date));
-                                }
+                                String timeString = group0.eduworld.Util.formatDateTime(date);
+                                dateTextView.setText(timeString);
                             }
                         }
                     }

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import com.google.firebase.FirebaseApp;
 
 public class EWApplication extends Application {
+    public static boolean teacher = false;
     // Called when the application is starting, before any other application objects have been created.
     // Overriding this method is totally optional!
     @Override

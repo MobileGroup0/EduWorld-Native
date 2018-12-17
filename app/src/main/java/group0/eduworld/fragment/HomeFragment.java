@@ -5,16 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import group0.eduworld.EWApplication;
 import group0.eduworld.R;
 import group0.eduworld.view.BookingView;
 
@@ -135,15 +138,65 @@ public class HomeFragment extends Fragment implements BookingView.BookingViewLis
                                             dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    DocumentSnapshot document = task.getResult();
-                                                    BookingView bf = new BookingView(homeFragment.getContext(), homeFragment, document.getReference());
-                                                    bf.setData(document.getData());
+                                                    final DocumentSnapshot document = task.getResult();
+                                                    final HashMap<String, Object> bfData = new HashMap<>();
 
-                                                    if(homeFragment.isResumed()) {
-                                                        homeFragment.updateBookingCard(bf);
-                                                        homeFragment.bookingCards.add(bf);
-                                                        fragmentList.add(bf);
-                                                    }
+                                                    // Load more data
+                                                    bfData.put("subject", document.get("subject"));
+                                                    bfData.put("location", document.get("location"));
+                                                    bfData.put("time", document.get("time"));
+                                                    bfData.put("status", document.get("status"));
+
+                                                    // Load name
+                                                    FirebaseFirestore.getInstance().collection("users")
+                                                            .document(FirebaseAuth.getInstance().getUid())
+                                                            .get()
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            DocumentReference userDocRef;
+                                                            boolean isUserTeacher = (boolean) documentSnapshot.get("teacher");
+
+                                                            if(isUserTeacher) userDocRef = (DocumentReference) document.get("student");
+                                                            else userDocRef = (DocumentReference) document.get("teacher");
+
+                                                            userDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    StringBuilder stringBuilder;
+                                                                    // Get name
+                                                                    stringBuilder = new StringBuilder();
+                                                                    String tmpString;
+                                                                    if(documentSnapshot.contains("firstname")) {
+                                                                        tmpString = documentSnapshot.getString("firstname");
+                                                                        if (tmpString != null) stringBuilder.append(tmpString);
+                                                                        stringBuilder.append(" ");
+                                                                    } else {
+                                                                        documentSnapshot.getReference().update("firstname", "");
+                                                                    }
+
+                                                                    if(documentSnapshot.contains("lastname")) {
+                                                                        tmpString = documentSnapshot.getString("lastname");
+                                                                        if(tmpString != null) stringBuilder.append(tmpString);
+                                                                    } else {
+                                                                        documentSnapshot.getReference().update("lastname", "");
+                                                                    }
+                                                                    bfData.put("name", stringBuilder.toString());
+
+                                                                    if(!homeFragment.isResumed()) return;
+                                                                    BookingView bf = new BookingView(homeFragment.getContext(), homeFragment, document.getReference());
+                                                                    bf.setData(bfData);
+
+                                                                    if(homeFragment.isResumed()) {
+                                                                        homeFragment.updateBookingCard(bf);
+                                                                        homeFragment.bookingCards.add(bf);
+                                                                        fragmentList.add(bf);
+                                                                    }
+                                                                }
+                                                            });
+
+                                                        }
+                                                    });
                                                 }
                                             });
                                         }

@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         navigation.selectedItemId = R.id.navigation_home
         switchFragment(homeFragment)
+
     }
 
     fun logOut(v: View){

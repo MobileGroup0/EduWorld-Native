@@ -46,5 +46,6 @@
     <string name="already_a_member">Already a member?</string>
     <string name="contentdescription_eduworld_logo">EduWorld Logo</string>
     <string name="profile">Profile</string>
+    <string name="send">Send</string>
 
 </resources>
