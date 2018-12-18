@@ -7,15 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import group0.eduworld.R
 import group0.eduworld.Util
 
 private const val VIEW_TYPE_MESSAGE_SENT = 1
 private const val VIEW_TYPE_MESSAGE_RECEIVED = 2
 
-class ChatRecyclerViewAdapter(context: Context, messageList: List<Message>) : Adapter<RecyclerView.ViewHolder>() {
+class ChatRecyclerViewAdapter(context: Context, messageList: ArrayList<Message>) : Adapter<RecyclerView.ViewHolder>() {
     private var mContext: Context = context
-    private  var mMessageList: List<Message> = messageList
+    private  var mMessageList: ArrayList<Message> = messageList
 
 
     override fun getItemCount(): Int {
@@ -51,6 +53,12 @@ class ChatRecyclerViewAdapter(context: Context, messageList: List<Message>) : Ad
         }
     }
 
+    fun addMessage(msg: Message){
+        mMessageList.add(msg)
+
+        notifyItemInserted(mMessageList.size - 1)
+    }
+
     private class SentMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var messageText: TextView = itemView.findViewById(R.id.text_message_body)
         var timeText : TextView = itemView.findViewById(R.id.text_message_time)
@@ -71,7 +79,15 @@ class ChatRecyclerViewAdapter(context: Context, messageList: List<Message>) : Ad
         fun bind(message: ReceivedMessage) {
             messageText.text = message.text
 
-            nameText.text = message.sender
+            FirebaseFirestore.getInstance().collection("users").document(message.sender).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val result : DocumentSnapshot = it.result!!
+                    val sb = StringBuilder(result.getString("firstname") as String)
+                    sb.append(' ')
+                    sb.append(result.getString("lastname"))
+                    nameText.text = sb.toString()
+                }
+            }
 
             // Format the stored timestamp into a readable String using method.
             timeText.text = Util.formatDateTime(message.createdAt)

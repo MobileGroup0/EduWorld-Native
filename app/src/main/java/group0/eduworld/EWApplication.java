@@ -1,8 +1,10 @@
 package group0.eduworld;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.res.Configuration;
 import com.google.firebase.FirebaseApp;
+import group0.eduworld.service.EWFirebaseMessagingService;
 
 public class EWApplication extends Application {
     public static boolean teacher = false;
@@ -13,6 +15,8 @@ public class EWApplication extends Application {
         FirebaseApp.initializeApp(this);
         super.onCreate();
         // Required initialization logic here!
+        Intent fbmsIntent = new Intent(this, EWFirebaseMessagingService.class);
+        startService(fbmsIntent);
     }
 
     // Called by the system when the device configuration changes while your component is running.

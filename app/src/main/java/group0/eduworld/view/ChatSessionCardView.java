@@ -14,19 +14,40 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
+import com.google.firebase.firestore.EventListener;
 import group0.eduworld.R;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
-public class ChatSessionCardView extends FrameLayout implements View.OnClickListener {
+public class ChatSessionCardView extends FrameLayout implements View.OnClickListener, EventListener<QuerySnapshot> {
     private final static String TAG = "ChatSessionCardView";
     private ImageView notifier;
     private TextView nameTextView;
     private TextView dateTextView;
     private TextView previewTextView;
+
+    @Override
+    public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+        if(snapshot != null){
+            for (DocumentChange documentChange: snapshot.getDocumentChanges()) {
+                if(documentChange.getType() == DocumentChange.Type.ADDED) {
+                    HashMap<String, Object> documentData = (HashMap) documentChange.getDocument().getData();
+                        List<DocumentReference> seen_by =  (List<DocumentReference>) documentData.get("seen_by");
+                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                        notifier.setVisibility(View.VISIBLE);
+                        if(seen_by != null)
+                            for (DocumentReference ref : seen_by) {
+                                if(ref.getId() == mAuth.getUid()){
+                                    notifier.setVisibility(View.INVISIBLE);
+                                    break;
+                                }
+                            }
+                    getRootView().invalidate();
+                }
+            }
+        }
+    }
 
     public interface ChatViewListener{
         void openChat(String id);
@@ -69,6 +90,8 @@ public class ChatSessionCardView extends FrameLayout implements View.OnClickList
         inflater.inflate(group0.eduworld.R.layout.view_chat_session_card, this);
 
         findViewById(R.id.card).setOnClickListener(this);
+
+        source.collection("messages").orderBy("time", Query.Direction.DESCENDING).limit(1).addSnapshotListener(this);
 
         notifier = findViewById(group0.eduworld.R.id.msgNotifier);
         nameTextView = findViewById(group0.eduworld.R.id.nameTextView);
@@ -123,15 +146,16 @@ public class ChatSessionCardView extends FrameLayout implements View.OnClickList
                 }
 
                 // Get latest message
-                source.collection("messenges").orderBy("time", Query.Direction.ASCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                source.collection("messages").orderBy("time", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if(e != null){
                             Log.d(TAG, e.getMessage());
-                        }else if(queryDocumentSnapshots != null){
+                        }else if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
                             DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+
                             // Set text
-                            if(doc.contains("text")){
+                            if(doc.contains("text")) {
                                 previewTextView.setText((String) doc.get("text"));
                             }
 
@@ -140,6 +164,18 @@ public class ChatSessionCardView extends FrameLayout implements View.OnClickList
                                 Date date = ((Date)doc.get("time"));
                                 String timeString = group0.eduworld.Util.formatDateTime(date);
                                 dateTextView.setText(timeString);
+                            }
+
+                            if(doc.contains("seen_by")){
+                                List<DocumentReference> seen_by =  (List<DocumentReference>)doc.get("seen_by");
+                                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                notifier.setVisibility(View.INVISIBLE);
+                                for (DocumentReference ref : seen_by) {
+                                    if(ref.getId() == mAuth.getUid()){
+                                        notifier.setVisibility(View.VISIBLE);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }

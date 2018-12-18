@@ -96,6 +96,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
+            android:onClick="onClick"
             android:text="@string/send"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="14sp" />
